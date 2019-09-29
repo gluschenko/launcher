@@ -5,8 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Launcher"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="400">
+        Title="MainWindow" MinHeight="400" MinWidth="400" Height="400" Width="400">
     <Grid>
-        
+        <Image Height="120" Stretch="UniformToFill" VerticalAlignment="Top"/>
+        <Grid Margin="0,120,0,0">
+            <ListView>
+                
+            </ListView>
+        </Grid>
     </Grid>
 </Window>

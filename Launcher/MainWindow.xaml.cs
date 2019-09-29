@@ -12,14 +12,19 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Launcher.Core;
 
 namespace Launcher
 {
     public partial class MainWindow : Window
     {
+        DataManager<Config> ConfigManager = new DataManager<Config>("Launcher.json");
+
         public MainWindow()
         {
             InitializeComponent();
+
+
         }
     }
 }
