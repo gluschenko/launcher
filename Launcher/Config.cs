@@ -10,7 +10,8 @@ namespace Launcher
     [DataContract]
     public class Config
     {
-        [DataMember] public string Title = "";
-        [DataMember] public string Logo = "";
+        [DataMember] public string Title;
+        [DataMember] public string Logo;
+        [DataMember] public string VersionsURL;
     }
 }
