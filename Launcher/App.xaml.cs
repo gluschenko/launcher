@@ -8,10 +8,9 @@ using System.Windows;
 
 namespace Launcher
 {
-    /// <summary>
-    /// Логика взаимодействия для App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        public const string Title = "Launcher";
+        public const string Version = "0.1";
     }
 }

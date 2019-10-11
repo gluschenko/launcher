@@ -13,13 +13,18 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Launcher.Core;
+using Launcher.Pages;
 
-namespace Launcher
+namespace Launcher.Views
 {
     public partial class MainWindow : Window
     {
         readonly DataManager<Config> ConfigManager = new DataManager<Config>("Launcher.json");
         readonly Config Config;
+
+        readonly MainPage MainPage = new MainPage();
+        readonly LocalPage LocalPage = new LocalPage();
+        readonly DownloadsPage DownloadsPage = new DownloadsPage();
 
         public MainWindow()
         {
@@ -29,6 +34,7 @@ namespace Launcher
 
             Title = Config.Title ?? App.Title;
 
+            FrameView.Navigate(MainPage);
         }
 
         // Alert windows
