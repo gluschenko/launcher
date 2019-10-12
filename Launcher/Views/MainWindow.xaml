@@ -8,20 +8,27 @@
         Title="MainWindow" MinHeight="400" MinWidth="400" Height="400" Width="400">
     <Grid>
         <Grid Height="120" VerticalAlignment="Top">
-            <Image Stretch="UniformToFill"/>
-            <Label Content="Version" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="White">
+            <Border Background="OliveDrab">
+                <Image x:Name="Image" Source="/Launcher;component/Launcher.png"/>
+            </Border>
+            <Label x:Name="Version" Content="Version" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="White">
                 <Label.Effect>
                     <DropShadowEffect BlurRadius="3" Opacity="0.5" ShadowDepth="2"/>
                 </Label.Effect>
             </Label>
         </Grid>
         <Grid Margin="0,120,0,0">
-            <StackPanel Height="30" VerticalAlignment="Top" Orientation="Horizontal">
-                <Button Content="1234"></Button>
-                <Button Content="1234"></Button>
-                <Button Content="1234"></Button>
-            </StackPanel>
-            <Frame x:Name="FrameView" Margin="0,30,0,0" NavigationUIVisibility="Hidden"></Frame>
+
+            <Border Padding="8,0" >
+                <StackPanel x:Name="Tabs" Height="30" VerticalAlignment="Top" Orientation="Horizontal">
+                    <Button x:Name="Tab" Content="1234" Style="{StaticResource TabStyle}"/>
+                    <Button Content="1234" Style="{StaticResource TabStyle}" IsEnabled="False"></Button>
+                </StackPanel>
+            </Border>
+
+            <Border Margin="0,30,0,0" BorderBrush="Black" BorderThickness="0,1,0,0">
+                <Frame x:Name="FrameView" NavigationUIVisibility="Hidden"></Frame>
+            </Border>
         </Grid>
     </Grid>
 </Window>

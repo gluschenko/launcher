@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Markup;
 using Launcher.Core;
 using Launcher.Pages;
 
@@ -25,6 +27,7 @@ namespace Launcher.Views
         readonly MainPage MainPage = new MainPage();
         readonly LocalPage LocalPage = new LocalPage();
         readonly DownloadsPage DownloadsPage = new DownloadsPage();
+        readonly SettingsPage SettingsPage = new SettingsPage();
 
         public MainWindow()
         {
@@ -33,8 +36,45 @@ namespace Launcher.Views
             Config = ConfigManager.Load(ThrowException);
 
             Title = Config.Title ?? App.Title;
+            Version.Content = $"v {App.Version}";
+
+            if (!string.IsNullOrEmpty(Config.Logo))
+            {
+                try
+                {
+                    string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Config.Logo);
+                    ImageSource imageSource = new BitmapImage(new Uri(path));
+                    Image.Source = imageSource;
+                }
+                catch (Exception e) {
+                    ThrowException(e);
+                }
+            }
 
             FrameView.Navigate(MainPage);
+
+            FillTabBar(Tabs, CloneControl<Button>(Tab), MainPage, LocalPage, DownloadsPage, SettingsPage);
+        }
+
+        public void FillTabBar(StackPanel panel, Button tab, params Page[] pages)
+        {
+            panel.Children.Clear();
+            foreach (var page in pages)
+            {
+                var tabCopy = CloneControl<Button>(tab);
+                tabCopy.Content = page.Title;
+                tabCopy.Click += (s, e) => FrameView.Navigate(page);
+                panel.Children.Add(tabCopy);
+            }
+        }
+
+        public T CloneControl<T>(T obj) where T : FrameworkElement
+        {
+            /*var newObj = Activator.CreateInstance<T>();
+            newObj.DataContext = obj.DataContext;
+            return newObj;*/
+
+            return (T)XamlReader.Parse(XamlWriter.Save(obj));
         }
 
         // Alert windows
