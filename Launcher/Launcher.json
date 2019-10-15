@@ -1,5 +1,6 @@
 {
   "Title": "BC Launcher",
-  "Logo": "Launcher.png",
+  "Logo": "Logo.png",
+  "Background": "Background.png",
   "VersionsURL": "https://dev.buildercraft.ru/buildercraft/server/version.php"
 }

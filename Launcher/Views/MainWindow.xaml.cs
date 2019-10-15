@@ -21,59 +21,132 @@ namespace Launcher.Views
 {
     public partial class MainWindow : Window
     {
-        readonly DataManager<Config> ConfigManager = new DataManager<Config>("Launcher.json");
-        readonly Config Config;
+        // public
+        public Config Config { get; set; }
+        public VersionsResponse Versions { get; set; }
+
+        // private
+        readonly DataManager<Config> ConfigManager = new DataManager<Config>(App.ConfigPath);
 
         readonly MainPage MainPage = new MainPage();
         readonly LocalPage LocalPage = new LocalPage();
         readonly DownloadsPage DownloadsPage = new DownloadsPage();
         readonly SettingsPage SettingsPage = new SettingsPage();
 
+        readonly TabHost tabHost;
+
         public MainWindow()
         {
             InitializeComponent();
 
-            Config = ConfigManager.Load(ThrowException);
-
-            Title = Config.Title ?? App.Title;
+            Title = App.Title;
             Version.Content = $"v {App.Version}";
 
-            if (!string.IsNullOrEmpty(Config.Logo))
+            try
             {
-                try
-                {
-                    string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Config.Logo);
-                    ImageSource imageSource = new BitmapImage(new Uri(path));
-                    Image.Source = imageSource;
-                }
-                catch (Exception e) {
-                    ThrowException(e);
-                }
+                Config = ConfigManager.Load();
+            }
+            catch (Exception e)
+            {
+                ThrowException(e);
+                Close();
             }
 
-            FrameView.Navigate(MainPage);
+            if (Config != null)
+            {
+                Image.Load(Config.Logo);
+                BackgroundImage.Load(Config.Background);
+                Title = Config.Title;
 
-            FillTabBar(Tabs, CloneControl<Button>(Tab), MainPage, LocalPage, DownloadsPage, SettingsPage);
+                //FillTabBar(Tabs, CloneControl(Tab), MainPage, LocalPage, DownloadsPage, SettingsPage);
+                tabHost = new TabHost(Tabs, FrameView, Tab, new Page[] { MainPage, LocalPage, DownloadsPage, SettingsPage });
+
+                GetVersionsFromWeb((versions) =>
+                {
+                    Versions = versions;
+
+                    Alert(versions.Version);
+                    Alert(string.Join(", ", versions.WindowsVersions));
+                });
+            }
+            else
+            {
+                Error("Config is empty: " + ConfigManager.Path);
+                Close();
+            }
         }
 
-        public void FillTabBar(StackPanel panel, Button tab, params Page[] pages)
+        /*public void FillTabBar(StackPanel panel, TabButton tabPattern, params Page[] pages)
         {
             panel.Children.Clear();
             foreach (var page in pages)
             {
-                var tabCopy = CloneControl<Button>(tab);
-                tabCopy.Content = page.Title;
-                tabCopy.Click += (s, e) => FrameView.Navigate(page);
-                panel.Children.Add(tabCopy);
+                var tab = CloneControl(tabPattern);
+                tab.Content = page.Title;
+                tab.Click += OnClick;
+                panel.Children.Add(tab);
+
+                void OnClick(object sender, RoutedEventArgs args)
+                {
+                    FrameView.Navigate(page);
+
+                    foreach (var _tab in panel.Children)
+                    {
+                        try
+                        {
+                            ((TabButton)_tab).Select(tab == _tab);
+                        }
+                        catch (Exception e)
+                        {
+                            ThrowException(e);
+                        }
+                    }
+
+                    try
+                    {
+                        foreach (var _page in pages)
+                        {
+                            if (page == _page)
+                            {
+                                ((ILauncherPage)_page).OnShown();
+                            }
+                            else
+                            {
+                                ((ILauncherPage)_page).OnHidden();
+                            }
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        ThrowException(e);
+                    }
+                }
             }
+
+            if (panel.Children.Count > 0)
+            {
+                panel.Children[0].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            }
+        }*/
+
+        public void GetVersionsFromWeb(Action<VersionsResponse> onDone)
+        {
+            IWebClient webClient = new WebClientAsync();
+            webClient.Get(Config.VersionsURL, (message) => {
+                WebClient.ProcessResponse(message,
+                    (data) =>
+                    {
+                        var result = JsonUtility.FromJson<VersionsResponse>(data);
+                        onDone?.Invoke(result);
+                    }, (code) =>
+                    {
+                        Alert("Error: " + code);
+                    });
+            }, ThrowException);
         }
 
         public T CloneControl<T>(T obj) where T : FrameworkElement
         {
-            /*var newObj = Activator.CreateInstance<T>();
-            newObj.DataContext = obj.DataContext;
-            return newObj;*/
-
             return (T)XamlReader.Parse(XamlWriter.Save(obj));
         }
 
@@ -83,4 +156,8 @@ namespace Launcher.Views
         public void Error(string text, string title = "Error") => MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Error);
         public void ThrowException(Exception exception) => Error(exception.ToString(), exception.GetType().Name);
     }
+
+    
+
+    
 }

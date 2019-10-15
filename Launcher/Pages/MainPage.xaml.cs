@@ -15,14 +15,23 @@ using System.Windows.Shapes;
 
 namespace Launcher.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для MainPage.xaml
-    /// </summary>
-    public partial class MainPage : Page
+    public partial class MainPage : Page, ITabPage
     {
         public MainPage()
         {
             InitializeComponent();
+        }
+
+        public string GetTitle() => Title;
+
+        public void OnShown()
+        {
+
+        }
+
+        public void OnHidden()
+        {
+
         }
     }
 }

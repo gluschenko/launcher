@@ -15,14 +15,23 @@ using System.Windows.Shapes;
 
 namespace Launcher.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для DownloadsPage.xaml
-    /// </summary>
-    public partial class DownloadsPage : Page
+    public partial class DownloadsPage : Page, ITabPage
     {
         public DownloadsPage()
         {
             InitializeComponent();
+        }
+
+        public string GetTitle() => Title;
+
+        public void OnShown()
+        {
+
+        }
+
+        public void OnHidden()
+        {
+            
         }
     }
 }

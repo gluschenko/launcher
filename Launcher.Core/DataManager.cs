@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 
 namespace Launcher.Core
 {
-    public class DataManager<T>
+    public class DataManager<T> where T : class
     {
         public string Path { get; set; }
 
@@ -20,13 +20,22 @@ namespace Launcher.Core
             {
                 try
                 {
-                    string data = File.ReadAllText(Path);
-                    return JsonUtility.FromJson<T>(data);
+                    return JsonUtility.FromJson<T>(File.ReadAllText(Path));
                 }
                 catch(Exception ex)
                 {
                     onError?.Invoke(ex);
+                    return null;
                 }
+            }
+            return Activator.CreateInstance<T>();
+        }
+
+        public T Load()
+        {
+            if (File.Exists(Path))
+            {
+                return JsonUtility.FromJson<T>(File.ReadAllText(Path));
             }
             return Activator.CreateInstance<T>();
         }

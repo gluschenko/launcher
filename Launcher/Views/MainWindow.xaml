@@ -4,14 +4,18 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Launcher"
+        xmlns:views="clr-namespace:Launcher.Views"
         mc:Ignorable="d"
         Title="MainWindow" MinHeight="400" MinWidth="400" Height="400" Width="400">
     <Grid>
         <Grid Height="120" VerticalAlignment="Top">
             <Border Background="OliveDrab">
-                <Image x:Name="Image" Source="/Launcher;component/Launcher.png"/>
+                <Grid>
+                    <Image x:Name="BackgroundImage" Stretch="UniformToFill"/>
+                    <Image x:Name="Image"/>
+                </Grid>
             </Border>
-            <Label x:Name="Version" Content="Version" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="White">
+            <Label x:Name="Version" Margin="4" Content="Version" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="White">
                 <Label.Effect>
                     <DropShadowEffect BlurRadius="3" Opacity="0.5" ShadowDepth="2"/>
                 </Label.Effect>
@@ -21,8 +25,8 @@
 
             <Border Padding="8,0" >
                 <StackPanel x:Name="Tabs" Height="30" VerticalAlignment="Top" Orientation="Horizontal">
-                    <Button x:Name="Tab" Content="1234" Style="{StaticResource TabStyle}"/>
-                    <Button Content="1234" Style="{StaticResource TabStyle}" IsEnabled="False"></Button>
+                    <local:TabButton x:Name="Tab" Content="1234" Style="{StaticResource TabStyle}" StyleDefault="{StaticResource TabStyle}" StyleSelected="{StaticResource TabStyleSelected}"></local:TabButton>
+                    <local:TabButton x:Name="Tab2" Content="1234" Style="{StaticResource TabStyleSelected}"></local:TabButton>
                 </StackPanel>
             </Border>
 

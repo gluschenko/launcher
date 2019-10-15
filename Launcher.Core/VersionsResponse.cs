@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Launcher.Core
 {
+    [DataContract]
     public class VersionsResponse
     {
-        public string Version;
-	    public string URL;
-	    public string InstallerURL;
-	    public Dictionary<string, string> WindowsBuilds;
+        [DataMember] public string Version = "";
+        [DataMember] public string URL = "";
+        [DataMember] public string InstallerURL = "";
+        [DataMember] public string[] WindowsVersions = new string[0];
+        [DataMember] public string[] WindowsBuilds = new string[0];
     }
 }

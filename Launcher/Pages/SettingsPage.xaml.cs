@@ -15,14 +15,23 @@ using System.Windows.Shapes;
 
 namespace Launcher.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для SettingsPage.xaml
-    /// </summary>
-    public partial class SettingsPage : Page
+    public partial class SettingsPage : Page, ITabPage
     {
         public SettingsPage()
         {
             InitializeComponent();
+        }
+
+        public string GetTitle() => Title;
+
+        public void OnShown()
+        {
+
+        }
+
+        public void OnHidden()
+        {
+
         }
     }
 }
