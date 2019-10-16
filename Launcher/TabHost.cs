@@ -97,7 +97,6 @@ namespace Launcher
 
     public interface ITabPage
     {
-        string GetTitle();
         void OnShown();
         void OnHidden();
     }

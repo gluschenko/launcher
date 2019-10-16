@@ -89,6 +89,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Config.cs" />
+    <Compile Include="Entities\Build.cs" />
+    <Compile Include="Entities\LocalBuild.cs" />
     <Compile Include="ImageExtension.cs" />
     <Compile Include="Pages\DownloadsPage.xaml.cs">
       <DependentUpon>DownloadsPage.xaml</DependentUpon>

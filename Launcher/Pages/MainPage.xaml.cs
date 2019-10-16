@@ -22,8 +22,6 @@ namespace Launcher.Pages
             InitializeComponent();
         }
 
-        public string GetTitle() => Title;
-
         public void OnShown()
         {
 

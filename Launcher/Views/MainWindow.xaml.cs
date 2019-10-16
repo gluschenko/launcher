@@ -25,14 +25,13 @@ namespace Launcher.Views
         public Config Config { get; set; }
         public VersionsResponse Versions { get; set; }
 
+        public readonly MainPage MainPage = new MainPage();
+        public readonly LocalPage LocalPage = new LocalPage();
+        public readonly DownloadsPage DownloadsPage = new DownloadsPage();
+        public readonly SettingsPage SettingsPage = new SettingsPage();
+
         // private
         readonly DataManager<Config> ConfigManager = new DataManager<Config>(App.ConfigPath);
-
-        readonly MainPage MainPage = new MainPage();
-        readonly LocalPage LocalPage = new LocalPage();
-        readonly DownloadsPage DownloadsPage = new DownloadsPage();
-        readonly SettingsPage SettingsPage = new SettingsPage();
-
         readonly TabHost tabHost;
 
         public MainWindow()
@@ -61,12 +60,14 @@ namespace Launcher.Views
                 //FillTabBar(Tabs, CloneControl(Tab), MainPage, LocalPage, DownloadsPage, SettingsPage);
                 tabHost = new TabHost(Tabs, FrameView, Tab, new Page[] { MainPage, LocalPage, DownloadsPage, SettingsPage });
 
-                GetVersionsFromWeb((versions) =>
+                GetVersionsFromWeb((response) =>
                 {
-                    Versions = versions;
+                    Versions = response;
 
-                    Alert(versions.Version);
-                    Alert(string.Join(", ", versions.WindowsVersions));
+                    DownloadsPage.Update(response);
+
+                    //Alert(response.Version);
+                    //Alert(string.Join(", ", response.WindowsVersions));
                 });
             }
             else
@@ -75,59 +76,6 @@ namespace Launcher.Views
                 Close();
             }
         }
-
-        /*public void FillTabBar(StackPanel panel, TabButton tabPattern, params Page[] pages)
-        {
-            panel.Children.Clear();
-            foreach (var page in pages)
-            {
-                var tab = CloneControl(tabPattern);
-                tab.Content = page.Title;
-                tab.Click += OnClick;
-                panel.Children.Add(tab);
-
-                void OnClick(object sender, RoutedEventArgs args)
-                {
-                    FrameView.Navigate(page);
-
-                    foreach (var _tab in panel.Children)
-                    {
-                        try
-                        {
-                            ((TabButton)_tab).Select(tab == _tab);
-                        }
-                        catch (Exception e)
-                        {
-                            ThrowException(e);
-                        }
-                    }
-
-                    try
-                    {
-                        foreach (var _page in pages)
-                        {
-                            if (page == _page)
-                            {
-                                ((ILauncherPage)_page).OnShown();
-                            }
-                            else
-                            {
-                                ((ILauncherPage)_page).OnHidden();
-                            }
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        ThrowException(e);
-                    }
-                }
-            }
-
-            if (panel.Children.Count > 0)
-            {
-                panel.Children[0].RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
-            }
-        }*/
 
         public void GetVersionsFromWeb(Action<VersionsResponse> onDone)
         {
@@ -156,8 +104,4 @@ namespace Launcher.Views
         public void Error(string text, string title = "Error") => MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Error);
         public void ThrowException(Exception exception) => Error(exception.ToString(), exception.GetType().Name);
     }
-
-    
-
-    
 }
