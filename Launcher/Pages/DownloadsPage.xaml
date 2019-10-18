@@ -9,35 +9,33 @@
       d:DesignHeight="400" d:DesignWidth="400"
       Title="Downloads">
 
-    <Grid>
-        <!-- TODO: ItemsControl -->
-        <ListBox x:Name="listBox" HorizontalContentAlignment="Stretch" RenderTransformOrigin="0.5,0.5">
+    <Grid Background="White">
+        <ScrollViewer>
+            <ItemsControl x:Name="ListView" HorizontalContentAlignment="Stretch" RenderTransformOrigin="0.5,0.5">
 
-            <entities:Build x:Name="_1" Title="0.0.1" URL="123"></entities:Build>
-            <entities:Build x:Name="_2" Title="0.0.2" URL="123"></entities:Build>
-            <entities:Build x:Name="_3" Title="0.0.3" URL="123"></entities:Build>
+                <entities:Build x:Name="_1" Title="0.0.1" URL="123"></entities:Build>
+                <entities:Build x:Name="_2" Title="0.0.2" URL="123"></entities:Build>
+                <entities:Build x:Name="_3" Title="0.0.3" URL="123"></entities:Build>
 
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="Focusable" Value="False"/>
-                </Style>
-            </ListBox.ItemContainerStyle>
-
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border>
-                        <Grid>
-                            <Label FontSize="16" Content="{Binding Path=Title}" />
-                            <Button Content="Download" Margin="0" 
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border>
+                            <Grid Margin="4">
+                                <Label FontSize="16" Content="{Binding Path=Title}" />
+                                <ProgressBar Tag="{Binding Path=Title}" Width="100" Height="3" BorderThickness="0" Maximum="1" Value="0.5" ></ProgressBar>
+                                <Button Content="Download" Margin="0" 
                                     HorizontalAlignment="Right"
-                                    Tag="{Binding Path=Title}" 
-                                    Style="{StaticResource LiteButtonStyle}" />
-                                    <!--Click="ProjectDeleteButton_Click"-->
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
+                                    Tag="{Binding Path=URL}" 
+                                    Style="{StaticResource LiteButtonStyle}"
+                                    Click="DownloadButton_Click" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
 
-        </ListBox>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <Label x:Name="NoDataLabel" Content="No data" HorizontalAlignment="Center" VerticalAlignment="Center"></Label>
     </Grid>
 </Page>

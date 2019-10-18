@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,7 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+//using System.Windows.Shapes;
 using Launcher.Core;
 using Launcher.Views;
 using Launcher.Entities;
@@ -27,18 +28,19 @@ namespace Launcher.Pages
         {
             InitializeComponent();
             //
-            listBox.Items.Clear();
-            listBox.ItemsSource = Builds;
+            ListView.Items.Clear();
+            ListView.ItemsSource = Builds;
 
             Builds.CollectionChanged += (sender, e) =>
             {
-                listBox.Items.Refresh();
-                listBox.UpdateLayout();
+                UpdateItems();
             };
         }
 
         public void Update(VersionsResponse response)
         {
+            NoDataLabel.Visibility = Visibility.Hidden;
+
             if (response != null)
             {
                 var versions = response.WindowsVersions;
@@ -53,16 +55,17 @@ namespace Launcher.Pages
                         Builds.Add(new Build { Title = versions[i], URL = builds[i] });
                     }
                 }
-
-                /*listBox.Items.Clear();
-                listBox.ItemsSource = Builds;
-                listBox.Items.Refresh();
-                listBox.UpdateLayout();*/
             }
             else
             {
-
+                NoDataLabel.Visibility = Visibility.Visible;
             }
+        }
+
+        public void UpdateItems()
+        {
+            ListView.Items.Refresh();
+            ListView.UpdateLayout();
         }
 
         public void OnShown()
@@ -73,6 +76,21 @@ namespace Launcher.Pages
         public void OnHidden()
         {
             
+        }
+
+        private void DownloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)sender;
+            var basePath = button.Tag.ToString();
+
+            MessageBox.Show(basePath);
+
+            foreach (var build in Builds)
+            {
+                build.Title += "123";
+            }
+
+            UpdateItems();
         }
     }
 }

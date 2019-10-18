@@ -73,7 +73,10 @@ namespace Launcher
                             ((ITabPage)_page).OnHidden();
                         }
                     }
-                    catch { }
+                    catch(Exception e)
+                    {
+                        MessageBox.Show(e.ToString(), e.GetType().Name, MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
         }

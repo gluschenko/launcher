@@ -41,6 +41,8 @@ namespace Launcher.Views
             Title = App.Title;
             Version.Content = $"v {App.Version}";
 
+            LocalPage.MainWindow = this;
+
             try
             {
                 Config = ConfigManager.Load();
