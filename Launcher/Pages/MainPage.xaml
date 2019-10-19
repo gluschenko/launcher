@@ -6,14 +6,19 @@
       xmlns:local="clr-namespace:Launcher.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="400"
-      Title="Main">
+      Title="Главная">
     
 
-    <Grid>
-        <Button Content="PLAY!" Width="130" Height="50" FontSize="20" Style="{StaticResource RedButtonStyle}">
+    <Grid Background="White">
+        <Button Content="ИГРАТЬ" BorderThickness="0" Width="130" Height="50" FontSize="16" Style="{StaticResource RedButtonStyle}" Click="PlayButton_Click">
             <Button.Effect>
                 <DropShadowEffect Direction="-70" Opacity="0.4" RenderingBias="Quality" BlurRadius="20"/>
             </Button.Effect>
         </Button>
+        <Label x:Name="VersionLabel" 
+               HorizontalAlignment="Center" 
+               VerticalAlignment="Bottom" 
+               Padding="5" 
+               Foreground="Gray">Version</Label>
     </Grid>
 </Page>

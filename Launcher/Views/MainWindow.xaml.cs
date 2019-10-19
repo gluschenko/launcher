@@ -22,7 +22,10 @@ namespace Launcher.Views
     public partial class MainWindow : Window
     {
         // public
+        public TabHost TabControl { get; private set; }
+
         public Config Config { get; set; }
+        public Prefs Prefs { get; set; }
         public VersionsResponse Versions { get; set; }
 
         public readonly MainPage MainPage = new MainPage();
@@ -31,8 +34,8 @@ namespace Launcher.Views
         public readonly SettingsPage SettingsPage = new SettingsPage();
 
         // private
-        readonly DataManager<Config> ConfigManager = new DataManager<Config>(App.ConfigPath);
-        readonly TabHost tabHost;
+        readonly DataManager<Config> ConfigManager = new DataManager<Config>(App.GetAbsolutePath(App.ConfigPath));
+        readonly DataManager<Prefs> PrefsManager = new DataManager<Prefs>(App.GetAbsolutePath(App.PrefsPath));
 
         public MainWindow()
         {
@@ -41,11 +44,15 @@ namespace Launcher.Views
             Title = App.Title;
             Version.Content = $"v {App.Version}";
 
+            MainPage.MainWindow = this;
             LocalPage.MainWindow = this;
+
+            //Alert("Это предварительная тестовая версия будущего лаунчера игры. Основная цель текущего релиза - проверка работоспособности.");
 
             try
             {
                 Config = ConfigManager.Load();
+                Prefs = PrefsManager.Load();
             }
             catch (Exception e)
             {
@@ -53,24 +60,29 @@ namespace Launcher.Views
                 Close();
             }
 
-            if (Config != null)
+            if (Config != null && Prefs != null)
             {
                 Image.Load(Config.Logo);
                 BackgroundImage.Load(Config.Background);
                 Title = Config.Title;
+                Width = Prefs.Width;
+                Height = Prefs.Height;
+                WindowState = Prefs.WindowState;
 
-                //FillTabBar(Tabs, CloneControl(Tab), MainPage, LocalPage, DownloadsPage, SettingsPage);
-                tabHost = new TabHost(Tabs, FrameView, Tab, new Page[] { MainPage, LocalPage, DownloadsPage, SettingsPage });
+                TabControl = new TabHost(Tabs, FrameView, Tab, new Page[] { MainPage, LocalPage, DownloadsPage, SettingsPage });
 
                 GetVersionsFromWeb((response) =>
                 {
                     Versions = response;
-
                     DownloadsPage.Update(response);
-
-                    //Alert(response.Version);
-                    //Alert(string.Join(", ", response.WindowsVersions));
                 });
+
+                Closing += (s, e) => {
+                    Prefs.Width = Width;
+                    Prefs.Height = Height;
+                    Prefs.WindowState = WindowState;
+                    PrefsManager.Save(Prefs, (ee) => ThrowException(ee));
+                };
             }
             else
             {

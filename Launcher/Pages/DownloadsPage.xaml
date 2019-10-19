@@ -7,7 +7,7 @@
       xmlns:entities="clr-namespace:Launcher.Entities"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="400"
-      Title="Downloads">
+      Title="Загрузки">
 
     <Grid Background="White">
         <ScrollViewer>
@@ -23,7 +23,7 @@
                             <Grid Margin="4">
                                 <Label FontSize="16" Content="{Binding Path=Title}" />
                                 <ProgressBar Tag="{Binding Path=Title}" Width="100" Height="3" BorderThickness="0" Maximum="1" Value="0.5" ></ProgressBar>
-                                <Button Content="Download" Margin="0" 
+                                <Button Content="Загрузить" Margin="0" 
                                     HorizontalAlignment="Right"
                                     Tag="{Binding Path=URL}" 
                                     Style="{StaticResource LiteButtonStyle}"
@@ -36,6 +36,6 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <Label x:Name="NoDataLabel" Content="No data" HorizontalAlignment="Center" VerticalAlignment="Center"></Label>
+        <Label x:Name="NoDataLabel" Content="Нет данных" HorizontalAlignment="Center" VerticalAlignment="Center"></Label>
     </Grid>
 </Page>

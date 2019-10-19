@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.IO;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -44,7 +45,7 @@ namespace Launcher.Pages
             NoDataLabel.Visibility = Visibility.Hidden;
 
             string dir = App.GetAbsolutePath(App.VersionsDirectory);
-            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            //if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
             if (Directory.Exists(dir))
             {
@@ -84,7 +85,19 @@ namespace Launcher.Pages
             if (MainWindow?.Config != null)
             {
                 string path = Path.Combine(basePath, MainWindow.Config.BuildExecutable);
-                MessageBox.Show(path);
+                //MessageBox.Show(path);
+
+                try
+                {
+                    Process.Start(path);
+                    MainWindow.Prefs.DefaultVersionPath = path;
+                    MainWindow.Prefs.DefaultVersion = Path.GetFileName(basePath);
+                    MainWindow.Close();
+                }
+                catch (Exception ex)
+                {
+                    MainWindow.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
+                }
             }
         }
     }

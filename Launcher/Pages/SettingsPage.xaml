@@ -8,7 +8,7 @@
       d:DesignHeight="400" d:DesignWidth="400"
       Title="Settings">
 
-    <Grid>
+    <Grid Background="White">
         
     </Grid>
 </Page>
