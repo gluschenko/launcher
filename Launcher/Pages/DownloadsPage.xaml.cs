@@ -78,19 +78,62 @@ namespace Launcher.Pages
             
         }
 
+        private int curPercent = 0;
         private void DownloadButton_Click(object sender, RoutedEventArgs e)
         {
             var button = (Button)sender;
-            var basePath = button.Tag.ToString();
+            var uri = button.Tag.ToString();
+            var fileName = Path.GetFileName(uri);
+            var destPath = App.GetAbsolutePath(App.DownloadsDirectory);
+            destPath = Path.Combine(destPath, fileName);
 
-            MessageBox.Show(basePath);
-
-            foreach (var build in Builds)
+            try 
             {
-                build.Title += "123";
+                if (!Directory.Exists(Path.GetDirectoryName(destPath)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(destPath));
+                }
+
+                Download(uri, destPath, 
+                    (percentage) => {
+                        if (percentage != curPercent) 
+                        {
+                            Dispatcher.Invoke(() => {
+                                foreach (var build in Builds)
+                                {
+                                    build.Title = percentage.ToString();
+                                }
+                                UpdateItems();
+
+                                curPercent = percentage;
+                            });
+                        }
+                    }, 
+                    () => {
+
+                    });
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private async void Download(string uri, string dest, Action<int> onChange, Action onDone)
+        {
+            var client = new System.Net.WebClient();
+            client.DownloadProgressChanged += (s, e) => onChange?.Invoke(e.ProgressPercentage);
+
+            var data = await client.DownloadDataTaskAsync(new Uri(uri));
+
+            using (var stream = new FileStream(dest, FileMode.OpenOrCreate)) 
+            {
+                await stream.WriteAsync(data, 0, data.Length);
             }
 
-            UpdateItems();
+            onDone?.Invoke();
+            client.Dispose();
+            GC.Collect();
         }
     }
 }
