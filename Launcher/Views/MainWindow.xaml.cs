@@ -31,7 +31,7 @@ namespace Launcher.Views
         public readonly MainPage MainPage = new MainPage();
         public readonly LocalPage LocalPage = new LocalPage();
         public readonly DownloadsPage DownloadsPage = new DownloadsPage();
-        public readonly SettingsPage SettingsPage = new SettingsPage();
+        //public readonly SettingsPage SettingsPage = new SettingsPage();
 
         // private
         readonly DataManager<Config> ConfigManager = new DataManager<Config>(App.GetAbsolutePath(App.ConfigPath));
@@ -46,8 +46,7 @@ namespace Launcher.Views
 
             MainPage.MainWindow = this;
             LocalPage.MainWindow = this;
-
-            //Alert("Это предварительная тестовая версия будущего лаунчера игры. Основная цель текущего релиза - проверка работоспособности.");
+            DownloadsPage.MainWindow = this;
 
             try
             {
@@ -69,7 +68,7 @@ namespace Launcher.Views
                 Height = Prefs.Height;
                 WindowState = Prefs.WindowState;
 
-                TabControl = new TabHost(Tabs, FrameView, Tab, new Page[] { MainPage, LocalPage, DownloadsPage, SettingsPage });
+                TabControl = new TabHost(Tabs, FrameView, Tab, new Page[] { MainPage, LocalPage, DownloadsPage /*, SettingsPage*/ });
 
                 GetVersionsFromWeb((response) =>
                 {

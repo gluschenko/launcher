@@ -22,7 +22,6 @@
                         <Border>
                             <Grid Margin="4">
                                 <Label FontSize="16" Content="{Binding Path=Title}" />
-                                <ProgressBar Tag="{Binding Path=Title}" Width="100" Height="3" BorderThickness="0" Maximum="1" Value="0.5" ></ProgressBar>
                                 <Button Content="Загрузить" Margin="0" 
                                     HorizontalAlignment="Right"
                                     Tag="{Binding Path=URL}" 
@@ -37,5 +36,7 @@
         </ScrollViewer>
 
         <Label x:Name="NoDataLabel" Content="Нет данных" HorizontalAlignment="Center" VerticalAlignment="Center"></Label>
+
+        <ProgressBar x:Name="ProgessBar" Height="8" BorderThickness="0" Maximum="100" Value="50" VerticalAlignment="Bottom" ></ProgressBar>
     </Grid>
 </Page>

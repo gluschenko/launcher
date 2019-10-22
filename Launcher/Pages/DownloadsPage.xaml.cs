@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.IO;
 using System.Text;
+using WebClient = System.Net.WebClient;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Diagnostics;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -22,6 +24,8 @@ namespace Launcher.Pages
 {
     public partial class DownloadsPage : Page, ITabPage
     {
+        public MainWindow MainWindow;
+
         readonly ObservableCollection<Build> Builds = new ObservableCollection<Build>();
 
         public DownloadsPage()
@@ -30,6 +34,8 @@ namespace Launcher.Pages
             //
             ListView.Items.Clear();
             ListView.ItemsSource = Builds;
+            //
+            ProgessBar.Visibility = Visibility.Hidden;
 
             Builds.CollectionChanged += (sender, e) =>
             {
@@ -94,24 +100,35 @@ namespace Launcher.Pages
                     Directory.CreateDirectory(Path.GetDirectoryName(destPath));
                 }
 
-                Download(uri, destPath, 
-                    (percentage) => {
-                        if (percentage != curPercent) 
-                        {
-                            Dispatcher.Invoke(() => {
-                                foreach (var build in Builds)
-                                {
-                                    build.Title = percentage.ToString();
-                                }
-                                UpdateItems();
+                Download(uri, destPath, onChange, onDone);
 
-                                curPercent = percentage;
-                            });
-                        }
-                    }, 
-                    () => {
+                void onChange(int percentage) 
+                {
+                    if (percentage != curPercent)
+                    {
+                        Dispatcher.Invoke(() => {
+                            ProgessBar.Visibility = Visibility.Visible; 
+                            ProgessBar.Value = percentage;
 
-                    });
+                             curPercent = percentage;
+                        });
+                    }
+                }
+
+                void onDone()
+                {
+                    ProgessBar.Visibility = Visibility.Hidden;
+
+                    try
+                    {
+                        Process.Start(destPath);
+                        //MainWindow.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        MainWindow.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
+                    }
+                }
             }
             catch (Exception ex) 
             {
@@ -119,12 +136,14 @@ namespace Launcher.Pages
             }
         }
 
+        private WebClient webClient = new WebClient();
         private async void Download(string uri, string dest, Action<int> onChange, Action onDone)
         {
-            var client = new System.Net.WebClient();
-            client.DownloadProgressChanged += (s, e) => onChange?.Invoke(e.ProgressPercentage);
+            if (webClient.IsBusy) return;
 
-            var data = await client.DownloadDataTaskAsync(new Uri(uri));
+            webClient.DownloadProgressChanged += (s, e) => onChange?.Invoke(e.ProgressPercentage);
+
+            var data = await webClient.DownloadDataTaskAsync(new Uri(uri));
 
             using (var stream = new FileStream(dest, FileMode.OpenOrCreate)) 
             {
@@ -132,7 +151,6 @@ namespace Launcher.Pages
             }
 
             onDone?.Invoke();
-            client.Dispose();
             GC.Collect();
         }
     }
