@@ -6,11 +6,6 @@ Requirements:
 * .NET Framework >= 4.5
 * WPF
 
-## Showcase
-
-![](/Media/screen_1.png)
-![](/Media/screen_2.png)
-
 ## Configuration
 
 You can customize the logo, background and title of the main window. All these parameters are included in Launcher.json. The icon is not configurable in the json configuration. 
@@ -64,3 +59,8 @@ You can customize the logo, background and title of the main window. All these p
 
 `WindowsBuilds` - List of available installer (corresponds to the previous field)
 
+
+## Showcase
+
+![](/Media/screen_1.png)
+![](/Media/screen_2.png)
