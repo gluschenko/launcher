@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net;
-using System.IO;
-using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Launcher.Core
@@ -16,6 +14,11 @@ namespace Launcher.Core
         {
             Client = new HttpClient();
             Client.DefaultRequestHeaders.Add("User-Agent", "123");
+        }
+
+        ~WebClientAsync()
+        {
+            Client.Dispose();
         }
 
         public async void Get(string URL, Action<HttpResponseMessage> response, Action<Exception> error)
@@ -49,19 +52,20 @@ namespace Launcher.Core
 
         public Task<HttpResponseMessage> PostAsync(string URL, Dictionary<string, object> fields, Action<Exception> error)
         {
-            var message = new HttpRequestMessage(HttpMethod.Post, URL);
-            var query = WebClient.BuildQuery(fields);
-            message.Content = new StringContent(query, System.Text.Encoding.UTF8, "application/x-www-form-urlencoded");
-
-            try
+            using (var message = new HttpRequestMessage(HttpMethod.Post, URL)) 
             {
-                return Client.SendAsync(message);
-            }
-            catch (Exception ex)
-            {
-                error?.Invoke(ex);
-            }
+                var query = WebClient.BuildQuery(fields);
+                message.Content = new StringContent(query, Encoding.UTF8, "application/x-www-form-urlencoded");
 
+                try
+                {
+                    return Client.SendAsync(message);
+                }
+                catch (Exception ex)
+                {
+                    error?.Invoke(ex);
+                }
+            }
             return null;
         }
     }

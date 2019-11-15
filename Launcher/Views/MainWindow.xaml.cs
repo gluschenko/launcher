@@ -63,7 +63,7 @@ namespace Launcher.Views
             {
                 Image.Load(Config.Logo);
                 BackgroundImage.Load(Config.Background);
-                Title = Config.Title;
+                Title = Config.Title ?? "";
                 Width = Prefs.Width;
                 Height = Prefs.Height;
                 WindowState = Prefs.WindowState;
@@ -93,23 +93,31 @@ namespace Launcher.Views
         public void GetVersionsFromWeb(Action<VersionsResponse> onDone)
         {
             IWebClient webClient = new WebClientAsync();
-            webClient.Get(Config.VersionsURL, (message) => {
-                WebClient.ProcessResponse(message,
-                    (data) =>
-                    {
-                        var result = JsonUtility.FromJson<VersionsResponse>(data);
-                        onDone?.Invoke(result);
-                    }, (code) =>
-                    {
-                        Alert("Error: " + code);
-                    });
+            webClient.Get(Config.VersionsURL ?? "http://google.com", (message) =>
+            {
+                try
+                {
+                    WebClient.ProcessResponse(message,
+                        (data) =>
+                        {
+                            var result = JsonUtility.FromJson<VersionsResponse>(data);
+                            onDone?.Invoke(result);
+                        }, (code) =>
+                        {
+                            Alert("Error: " + code);
+                        });
+                }
+                catch (Exception ex) 
+                {
+                    ThrowException(ex);
+                }
             }, ThrowException);
         }
 
-        public T CloneControl<T>(T obj) where T : FrameworkElement
+        /*public T CloneControl<T>(T obj) where T : FrameworkElement
         {
             return (T)XamlReader.Parse(XamlWriter.Save(obj));
-        }
+        }*/
 
         // Alert windows
         public void Alert(string text, string title = "Alert") => MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Information);

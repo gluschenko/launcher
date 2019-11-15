@@ -98,5 +98,4 @@ namespace Launcher.Core
             return string.Join("&", pairs);
         }
     }
-
 }
