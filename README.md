@@ -57,7 +57,7 @@ You can customize the **logo**, **background** and **title** of the main window.
 
 `WindowsVersions` - List of available versions (displays on downloads page)
 
-`WindowsBuilds` - List of available installer (corresponds to the previous field)
+`WindowsBuilds` - List of available installers (corresponds to the previous field)
 
 
 ## Showcase
