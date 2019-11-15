@@ -1,10 +1,15 @@
 ## Launcher
 
-My launcher application for installing and managing versions of Windows client applications.
+My launcher application for deployment and managing versions of Windows client applications.
 
 Requirements: 
 * .NET Framework >= 4.5
 * WPF
+
+## Showcase
+
+![](/Media/screen_1.png)
+![](/Media/screen_2.png)
 
 ## Configuration
 
@@ -58,3 +63,4 @@ You can customize the logo, background and title of the main window. All these p
 `WindowsVersions` - List of available versions (displays on downloads page)
 
 `WindowsBuilds` - List of available installer (corresponds to the previous field)
+
