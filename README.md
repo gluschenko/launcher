@@ -1,6 +1,6 @@
 ## Launcher
 
-My launcher application for deployment and managing versions of Windows client applications.
+My launcher application for **deployment and managing versions** of Windows client applications.
 
 Requirements: 
 * .NET Framework >= 4.5
@@ -8,7 +8,7 @@ Requirements:
 
 ## Configuration
 
-You can customize the logo, background and title of the main window. All these parameters are included in Launcher.json. The icon is not configurable in the json configuration. 
+You can customize the **logo**, **background** and **title** of the main window. All these parameters are included in Launcher.json. Icon is not configurable from json config. 
 
 #### Launcher.json: 
 
