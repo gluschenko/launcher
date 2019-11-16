@@ -59,6 +59,28 @@ You can customize the **logo**, **background** and **title** of the main window.
 
 `WindowsBuilds` - List of available installers (corresponds to the previous field)
 
+## Compilation
+
+-- Versions
+
+---- 2.1
+
+---- 2.2
+
+---- 2.3
+
+-- Downloads
+
+---- [...]
+
+-- Launcher.exe
+
+-- Launcher.Code.dll
+
+-- Launcher.json
+
+-- LauncherPrefs.json
+
 
 ## Showcase
 
