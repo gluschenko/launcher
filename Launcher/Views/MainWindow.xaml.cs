@@ -12,7 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+//using System.Windows.Shapes;
 using System.Windows.Markup;
 using Launcher.Core;
 using Launcher.Pages;
@@ -50,6 +50,13 @@ namespace Launcher.Views
 
             try
             {
+                if (!File.Exists(ConfigManager.Path)) 
+                {
+                    Error($"File '{Path.GetFileName(ConfigManager.Path)}' does not exist!");
+                    Close();
+                    return;
+                }
+
                 Config = ConfigManager.Load();
                 Prefs = PrefsManager.Load();
             }
@@ -57,6 +64,7 @@ namespace Launcher.Views
             {
                 ThrowException(e);
                 Close();
+                return;
             }
 
             if (Config != null && Prefs != null)
@@ -87,13 +95,14 @@ namespace Launcher.Views
             {
                 Error("Config is empty: " + ConfigManager.Path);
                 Close();
+                return;
             }
         }
 
         public void GetVersionsFromWeb(Action<VersionsResponse> onDone)
         {
             IWebClient webClient = new WebClientAsync();
-            webClient.Get(Config.VersionsURL ?? "http://google.com", (message) =>
+            webClient.Get(Config.VersionsURL, (message) =>
             {
                 try
                 {
