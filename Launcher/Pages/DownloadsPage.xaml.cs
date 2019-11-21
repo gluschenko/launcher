@@ -126,7 +126,7 @@ namespace Launcher.Pages
                     }
                     catch (Exception ex)
                     {
-                        MainWindow.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
+                        MessageHelper.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
                     }
                 }
             }

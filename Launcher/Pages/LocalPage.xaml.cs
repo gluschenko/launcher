@@ -74,7 +74,6 @@ namespace Launcher.Pages
 
         public void OnHidden()
         {
-
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
@@ -96,7 +95,7 @@ namespace Launcher.Pages
                 }
                 catch (Exception ex)
                 {
-                    MainWindow.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
+                    MessageHelper.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
                 }
             }
         }
