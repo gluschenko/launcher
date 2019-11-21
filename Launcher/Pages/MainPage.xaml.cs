@@ -57,7 +57,7 @@ namespace Launcher.Pages
                     }
                     catch (Exception ex)
                     {
-                        MessageHelper.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
+                        MainWindow.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
                         MainWindow.TabControl.Navigate(MainWindow.LocalPage);
                     }
                 }
