@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.ComponentModel;
 //using System.Windows.Shapes;
 using System.Windows.Markup;
 using Launcher.Core;
@@ -52,7 +53,7 @@ namespace Launcher.Views
             {
                 if (!File.Exists(ConfigManager.Path)) 
                 {
-                    Error($"File '{Path.GetFileName(ConfigManager.Path)}' does not exist!");
+                    MessageHelper.Error($"File '{Path.GetFileName(ConfigManager.Path)}' does not exist!");
                     Close();
                     return;
                 }
@@ -62,7 +63,7 @@ namespace Launcher.Views
             }
             catch (Exception e)
             {
-                ThrowException(e);
+                MessageHelper.ThrowException(e);
                 Close();
                 return;
             }
@@ -84,19 +85,22 @@ namespace Launcher.Views
                     DownloadsPage.Update(response);
                 });
 
-                Closing += (s, e) => {
-                    Prefs.Width = Width;
-                    Prefs.Height = Height;
-                    Prefs.WindowState = WindowState;
-                    PrefsManager.Save(Prefs, (ee) => ThrowException(ee));
-                };
+                Closing += OnWindowClosing;
             }
             else
             {
-                Error("Config is empty: " + ConfigManager.Path);
+                MessageHelper.Error("Config is empty: " + ConfigManager.Path);
                 Close();
                 return;
             }
+        }
+
+        private void OnWindowClosing(object sender, CancelEventArgs args) 
+        {
+            Prefs.Width = Width;
+            Prefs.Height = Height;
+            Prefs.WindowState = WindowState;
+            PrefsManager.Save(Prefs, (ee) => MessageHelper.ThrowException(ee));
         }
 
         public void GetVersionsFromWeb(Action<VersionsResponse> onDone)
@@ -113,25 +117,15 @@ namespace Launcher.Views
                             onDone?.Invoke(result);
                         }, (code) =>
                         {
-                            Alert("Error: " + code);
+                            MessageHelper.Alert("Error: " + code);
                         });
                 }
                 catch (Exception ex) 
                 {
-                    ThrowException(ex);
+                    MessageHelper.ThrowException(ex);
                 }
-            }, ThrowException);
+            }, MessageHelper.ThrowException);
         }
-
-        /*public T CloneControl<T>(T obj) where T : FrameworkElement
-        {
-            return (T)XamlReader.Parse(XamlWriter.Save(obj));
-        }*/
-
-        // Alert windows
-        public void Alert(string text, string title = "Alert") => MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Information);
-        public void Warning(string text, string title = "Warning") => MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Warning);
-        public void Error(string text, string title = "Error") => MessageBox.Show(text, title, MessageBoxButton.OK, MessageBoxImage.Error);
-        public void ThrowException(Exception exception) => Error(exception.ToString(), exception.GetType().Name);
+        
     }
 }
