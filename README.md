@@ -27,11 +27,11 @@ You can customize the **logo**, **background** and **title** of the main window.
 
 `Background` - Background picture relative path (.png)
 
-`VersionsURL` - Meta data on latest versions (example is below)
+`VersionsURL` - Meta data about latest versions (example is below)
 
 `BuildExecutable` - Main executable file (must be in each version folder)
 
-#### Web response example:
+#### Web response example (version.json):
 
     {
         "Version": "2.3",
