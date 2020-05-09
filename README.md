@@ -75,7 +75,7 @@ You can customize the **logo**, **background** and **title** of the main window.
 
 -- Launcher.exe
 
--- Launcher.Code.dll
+-- Launcher.Core.dll
 
 -- Launcher.json
 
