@@ -1,7 +1,7 @@
 {
   "Title": "BC Launcher",
-  "Logo": "Logo.png",
-  "Background": "Background.png",
+  "Logo": "Resources/Logo.png",
+  "Background": "Resources/Background.png",
   "VersionsURL": "https://buildercraft.ru/buildercraft/server/version.php",
   "BuildExecutable": "BuilderCraft.exe"
 }
