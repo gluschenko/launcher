@@ -59,23 +59,14 @@ You can customize the **logo**, **background** and **title** of the main window.
 ## Catalog structure
 
 * Versions
-
   * 2.1
-
   * 2.2
-
   * 2.3
-
 * Downloads
-
   * [...]
-
   * Launcher.exe
-
   * Launcher.Core.dll
-
   * Launcher.json
-
   * LauncherPrefs.json
 
 
