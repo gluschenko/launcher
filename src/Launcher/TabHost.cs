@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Markup;
 
 namespace Launcher
@@ -55,25 +43,25 @@ namespace Launcher
 
                 Frame.Navigate(page);
 
-                foreach (var _tab in Tabs.Keys)
+                foreach (var item in Tabs.Keys)
                 {
-                    _tab.Select(tab == _tab);
+                    item.Select(tab == item);
                 }
 
-                foreach (var _page in Tabs.Values)
+                foreach (var item in Tabs.Values)
                 {
                     try
                     {
-                        if (page == _page)
+                        if (page == item)
                         {
-                            ((ITabPage)_page).OnShown();
+                            ((ITabPage)item).OnShown();
                         }
                         else
                         {
-                            ((ITabPage)_page).OnHidden();
+                            ((ITabPage)item).OnHidden();
                         }
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         MessageBox.Show(e.ToString(), e.GetType().Name, MessageBoxButton.OK, MessageBoxImage.Error);
                     }
@@ -89,8 +77,8 @@ namespace Launcher
 
     public class TabButton : Button
     {
-        public Style StyleDefault { get; set; }
-        public Style StyleSelected { get; set; }
+        public Style StyleDefault { get; set; } = null!;
+        public Style StyleSelected { get; set; } = null!;
 
         public void Select(bool state)
         {

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization;
 
 namespace Launcher.Core
 {
@@ -22,7 +20,7 @@ namespace Launcher.Core
                 {
                     return JsonUtility.FromJson<T>(File.ReadAllText(Path));
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     onError?.Invoke(ex);
                     return null;

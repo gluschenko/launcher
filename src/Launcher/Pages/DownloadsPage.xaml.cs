@@ -1,43 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
-using System.Text;
-using WebClient = System.Net.WebClient;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Diagnostics;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-//using System.Windows.Shapes;
 using Launcher.Core;
-using Launcher.Views;
 using Launcher.Entities;
+using WebClient = System.Net.WebClient;
 
 namespace Launcher.Pages
 {
     public partial class DownloadsPage : Page, ITabPage
     {
-        public MainWindow MainWindow;
-
-        readonly ObservableCollection<Build> Builds = new ObservableCollection<Build>();
+        private readonly ObservableCollection<Build> _builds = new();
+        private readonly WebClient _webClient = new WebClient();
+        private int _currentProgress = 0;
 
         public DownloadsPage()
         {
             InitializeComponent();
             //
             ListView.Items.Clear();
-            ListView.ItemsSource = Builds;
+            ListView.ItemsSource = _builds;
             //
             ProgessBar.Visibility = Visibility.Hidden;
 
-            Builds.CollectionChanged += (sender, e) =>
+            _builds.CollectionChanged += (sender, e) =>
             {
                 UpdateItems();
             };
@@ -54,11 +41,11 @@ namespace Launcher.Pages
 
                 if (versions.Length == builds.Length)
                 {
-                    Builds.Clear();
+                    _builds.Clear();
 
                     for (int i = 0; i < versions.Length; i++)
                     {
-                        Builds.Add(new Build { Title = versions[i], URL = builds[i] });
+                        _builds.Add(new Build { Title = versions[i], URL = builds[i] });
                     }
                 }
             }
@@ -81,41 +68,42 @@ namespace Launcher.Pages
 
         public void OnHidden()
         {
-            
+
         }
 
-        private int curPercent = 0;
+
         private void DownloadButton_Click(object sender, RoutedEventArgs e)
         {
             var button = (Button)sender;
-            var uri = button.Tag.ToString();
+            var uri = button.Tag.ToString() ?? throw new Exception($"Uri is null");
             var fileName = Path.GetFileName(uri);
             var destPath = App.GetAbsolutePath(App.DownloadsDirectory);
             destPath = Path.Combine(destPath, fileName);
 
-            try 
+            try
             {
                 if (!Directory.Exists(Path.GetDirectoryName(destPath)))
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(destPath));
                 }
 
-                Download(uri, destPath, onChange, onDone);
+                Download(uri, destPath, OnChange, OnDone);
 
-                void onChange(int percentage) 
+                void OnChange(int percentage)
                 {
-                    if (percentage != curPercent)
+                    if (percentage != _currentProgress)
                     {
-                        Dispatcher.Invoke(() => {
-                            ProgessBar.Visibility = Visibility.Visible; 
+                        Dispatcher.Invoke(() =>
+                        {
+                            ProgessBar.Visibility = Visibility.Visible;
                             ProgessBar.Value = percentage;
 
-                             curPercent = percentage;
+                            _currentProgress = percentage;
                         });
                     }
                 }
 
-                void onDone()
+                void OnDone()
                 {
                     ProgessBar.Visibility = Visibility.Hidden;
 
@@ -130,22 +118,21 @@ namespace Launcher.Pages
                     }
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
         }
 
-        private WebClient webClient = new WebClient();
         private async void Download(string uri, string dest, Action<int> onChange, Action onDone)
         {
-            if (webClient.IsBusy) return;
+            if (_webClient.IsBusy) return;
 
-            webClient.DownloadProgressChanged += (s, e) => onChange?.Invoke(e.ProgressPercentage);
+            _webClient.DownloadProgressChanged += (s, e) => onChange?.Invoke(e.ProgressPercentage);
 
-            var data = await webClient.DownloadDataTaskAsync(new Uri(uri));
+            var data = await _webClient.DownloadDataTaskAsync(new Uri(uri));
 
-            using (var stream = new FileStream(dest, FileMode.OpenOrCreate)) 
+            using (var stream = new FileStream(dest, FileMode.OpenOrCreate))
             {
                 await stream.WriteAsync(data, 0, data.Length);
             }

@@ -1,39 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.IO;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-//using System.Windows.Shapes;
-using Launcher.Views;
 using Launcher.Entities;
+using Launcher.Views;
 
 namespace Launcher.Pages
 {
     public partial class LocalPage : Page, ITabPage
     {
-        public MainWindow MainWindow;
+        //private readonly MainWindow _mainWindow;
 
-        readonly ObservableCollection<LocalBuild> Builds = new ObservableCollection<LocalBuild>();
+        private readonly ObservableCollection<LocalBuild> _builds = new();
 
-        public LocalPage()
+        public LocalPage(/*MainWindow mainWindow*/)
         {
             InitializeComponent();
+            //_mainWindow = mainWindow;
             //
             ListView.Items.Clear();
-            ListView.ItemsSource = Builds;
+            ListView.ItemsSource = _builds;
 
-            Builds.CollectionChanged += (sender, e) =>
+            _builds.CollectionChanged += (sender, e) =>
             {
                 ListView.Items.Refresh();
                 ListView.UpdateLayout();
@@ -52,12 +41,12 @@ namespace Launcher.Pages
                 string[] dirs = Directory.GetDirectories(dir);
                 if (dirs.Length > 0)
                 {
-                    Builds.Clear();
+                    _builds.Clear();
 
                     for (int i = 0; i < dirs.Length; i++)
                     {
                         string title = Path.GetFileName(dirs[i]);
-                        Builds.Add(new LocalBuild { Title = title, Path = dirs[i] });
+                        _builds.Add(new LocalBuild { Title = title, Path = dirs[i] });
                     }
 
                     return;
@@ -79,25 +68,25 @@ namespace Launcher.Pages
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
             var button = (Button)sender;
-            var basePath = button.Tag.ToString();
+            var basePath = button.Tag.ToString() ?? throw new Exception("Path is null");
 
-            if (MainWindow?.Config != null)
+            /*if (_mainWindow?.Config != null)
             {
-                string path = Path.Combine(basePath, MainWindow.Config.BuildExecutable);
+                string path = Path.Combine(basePath, _mainWindow.Config.BuildExecutable);
                 //MessageBox.Show(path);
 
                 try
                 {
                     Process.Start(path);
-                    MainWindow.Prefs.DefaultVersionPath = path;
-                    MainWindow.Prefs.DefaultVersion = Path.GetFileName(basePath);
-                    MainWindow.Close();
+                    _mainWindow.Prefs.DefaultVersionPath = path;
+                    _mainWindow.Prefs.DefaultVersion = Path.GetFileName(basePath);
+                    _mainWindow.Close();
                 }
                 catch (Exception ex)
                 {
                     MessageHelper.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
                 }
-            }
+            }*/
         }
     }
 }

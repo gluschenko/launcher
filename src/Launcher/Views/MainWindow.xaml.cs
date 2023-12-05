@@ -1,20 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.ComponentModel;
-//using System.Windows.Shapes;
-using System.Windows.Markup;
 using Launcher.Core;
 using Launcher.Pages;
 
@@ -29,37 +16,43 @@ namespace Launcher.Views
         public Prefs Prefs { get; set; }
         public VersionsResponse Versions { get; set; }
 
-        public readonly MainPage MainPage = new MainPage();
-        public readonly LocalPage LocalPage = new LocalPage();
-        public readonly DownloadsPage DownloadsPage = new DownloadsPage();
-        //public readonly SettingsPage SettingsPage = new SettingsPage();
+        private readonly MainPage _mainPage;
+        private readonly LocalPage _localPage;
+        private readonly DownloadsPage _downloadsPage;
+        private readonly SettingsPage _settingsPage;
 
         // private
-        readonly DataManager<Config> ConfigManager = new DataManager<Config>(App.GetAbsolutePath(App.ConfigPath));
-        readonly DataManager<Prefs> PrefsManager = new DataManager<Prefs>(App.GetAbsolutePath(App.PrefsPath));
+        private readonly DataManager<Config> _configManager = new(App.GetAbsolutePath(App.ConfigPath));
+        private readonly DataManager<Prefs> _prefsManager = new(App.GetAbsolutePath(App.PrefsPath));
 
-        public MainWindow()
+        public MainWindow(
+            MainPage mainPage, 
+            LocalPage localPage, 
+            DownloadsPage downloadsPage,
+            SettingsPage settingsPage
+        )
         {
             InitializeComponent();
+
+            _mainPage = mainPage;
+            _localPage = localPage;
+            _downloadsPage = downloadsPage;
+            _settingsPage = settingsPage;
 
             Title = App.Title;
             Version.Content = $"v {App.Version}";
 
-            MainPage.MainWindow = this;
-            LocalPage.MainWindow = this;
-            DownloadsPage.MainWindow = this;
-
             try
             {
-                if (!File.Exists(ConfigManager.Path)) 
+                if (!File.Exists(_configManager.Path))
                 {
-                    MessageHelper.Error($"File '{Path.GetFileName(ConfigManager.Path)}' does not exist!");
+                    MessageHelper.Error($"File '{Path.GetFileName(_configManager.Path)}' does not exist!");
                     Close();
                     return;
                 }
 
-                Config = ConfigManager.Load();
-                Prefs = PrefsManager.Load();
+                Config = _configManager.Load();
+                Prefs = _prefsManager.Load();
             }
             catch (Exception e)
             {
@@ -77,55 +70,59 @@ namespace Launcher.Views
                 Height = Prefs.Height;
                 WindowState = Prefs.WindowState;
 
-                TabControl = new TabHost(Tabs, FrameView, Tab, new Page[] { MainPage, LocalPage, DownloadsPage /*, SettingsPage*/ });
+                TabControl = new TabHost(Tabs, FrameView, Tab, new Page[] { _mainPage, _localPage, _downloadsPage /*, SettingsPage*/ });
 
                 GetVersionsFromWeb((response) =>
                 {
                     Versions = response;
-                    DownloadsPage.Update(response);
+                    _downloadsPage.Update(response);
                 });
 
                 Closing += OnWindowClosing;
             }
             else
             {
-                MessageHelper.Error("Config is empty: " + ConfigManager.Path);
+                MessageHelper.Error("Config is empty: " + _configManager.Path);
                 Close();
                 return;
             }
         }
 
-        private void OnWindowClosing(object sender, CancelEventArgs args) 
+        private void OnWindowClosing(object? sender, CancelEventArgs args)
         {
             Prefs.Width = Width;
             Prefs.Height = Height;
             Prefs.WindowState = WindowState;
-            PrefsManager.Save(Prefs, (ee) => MessageHelper.ThrowException(ee));
+            _prefsManager.Save(Prefs, (ee) => MessageHelper.ThrowException(ee));
         }
 
         public void GetVersionsFromWeb(Action<VersionsResponse> onDone)
         {
             IWebClient webClient = new WebClientAsync();
-            webClient.Get(Config.VersionsURL, (message) =>
-            {
-                try
+            webClient.Get(
+                Config.VersionsURL, 
+                (message) =>
                 {
-                    WebClient.ProcessResponse(message,
-                        (data) =>
-                        {
-                            var result = JsonUtility.FromJson<VersionsResponse>(data);
-                            onDone?.Invoke(result);
-                        }, (code) =>
-                        {
-                            MessageHelper.Alert("Error: " + code);
-                        });
-                }
-                catch (Exception ex) 
-                {
-                    MessageHelper.ThrowException(ex);
-                }
-            }, MessageHelper.ThrowException);
+                    try
+                    {
+                        WebClient.ProcessResponse(message,
+                            (data) =>
+                            {
+                                var result = JsonUtility.FromJson<VersionsResponse>(data);
+                                onDone?.Invoke(result);
+                            }, (code) =>
+                            {
+                                MessageHelper.Alert("Error: " + code);
+                            });
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageHelper.ThrowException(ex);
+                    }
+                }, 
+                MessageHelper.ThrowException
+            );
         }
-        
+
     }
 }

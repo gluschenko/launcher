@@ -3,7 +3,7 @@
 My launcher application for **deployment and managing versions** of Windows client applications.
 
 Requirements: 
-* .NET Core 6.0 LTS
+* .NET 6.0 LTS
 * Windows 7 SP1 / Windows 8.1 / Windows 10
 * WPF
 

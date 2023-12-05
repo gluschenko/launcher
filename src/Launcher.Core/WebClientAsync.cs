@@ -52,7 +52,7 @@ namespace Launcher.Core
 
         public Task<HttpResponseMessage> PostAsync(string URL, Dictionary<string, object> fields, Action<Exception> error)
         {
-            using (var message = new HttpRequestMessage(HttpMethod.Post, URL)) 
+            using (var message = new HttpRequestMessage(HttpMethod.Post, URL))
             {
                 var query = WebClient.BuildQuery(fields);
                 message.Content = new StringContent(query, Encoding.UTF8, "application/x-www-form-urlencoded");

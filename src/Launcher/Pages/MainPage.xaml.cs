@@ -1,69 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Launcher.Views;
 
 namespace Launcher.Pages
 {
     public partial class MainPage : Page, ITabPage
     {
-        public MainWindow MainWindow { get; set; }
+        //private readonly MainWindow _mainWindow;
+        private readonly LocalPage _localPage;
 
-        public MainPage()
+        public MainPage(/*MainWindow mainWindow,*/ LocalPage localPage)
         {
             InitializeComponent();
+            //_mainWindow = mainWindow;
+            _localPage = localPage;
         }
 
         public void OnShown()
         {
             VersionLabel.Content = "";
 
-            if (MainWindow?.Prefs != null)
+            /*if (_mainWindow?.Prefs != null)
             {
-                VersionLabel.Content = MainWindow.Prefs.DefaultVersion ?? "";
-            }
+                VersionLabel.Content = _mainWindow.Prefs.DefaultVersion ?? "";
+            }*/
         }
 
         public void OnHidden()
         {
         }
 
-        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        private void PlayButton_Click(object? sender, RoutedEventArgs e)
         {
-            if (MainWindow?.Prefs != null)
+            /*if (_mainWindow.Prefs != null)
             {
-                if (string.IsNullOrEmpty(MainWindow.Prefs.DefaultVersionPath))
+                if (string.IsNullOrEmpty(_mainWindow.Prefs.DefaultVersionPath))
                 {
-                    MainWindow.TabControl.Navigate(MainWindow.LocalPage);
+                    _mainWindow.TabControl.Navigate(_localPage);
                 }
                 else
                 {
                     try
                     {
-                        Process.Start(MainWindow.Prefs.DefaultVersionPath);
-                        MainWindow.Close();
+                        Process.Start(_mainWindow.Prefs.DefaultVersionPath);
+                        _mainWindow.Close();
                     }
                     catch (Exception ex)
                     {
                         MessageHelper.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
-                        MainWindow.TabControl.Navigate(MainWindow.LocalPage);
+                        _mainWindow.TabControl.Navigate(_localPage);
                     }
                 }
-            }
+            }*/
         }
 
-        
+
     }
 }
