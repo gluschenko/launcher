@@ -18,7 +18,7 @@ namespace Launcher.Core
             {
                 try
                 {
-                    return JsonUtility.FromJson<T>(File.ReadAllText(Path));
+                    return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(File.ReadAllText(Path));
                 }
                 catch (Exception ex)
                 {
@@ -33,7 +33,7 @@ namespace Launcher.Core
         {
             if (File.Exists(Path))
             {
-                return JsonUtility.FromJson<T>(File.ReadAllText(Path));
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(File.ReadAllText(Path));
             }
             return Activator.CreateInstance<T>();
         }
@@ -42,7 +42,7 @@ namespace Launcher.Core
         {
             try
             {
-                string data = JsonUtility.ToJson(obj);
+                string data = Newtonsoft.Json.JsonConvert.SerializeObject(obj);
                 File.WriteAllText(Path, data);
             }
             catch (Exception ex)

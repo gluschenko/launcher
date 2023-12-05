@@ -3,13 +3,12 @@ using System.Windows;
 
 namespace Launcher
 {
-    [DataContract]
     public class Prefs
     {
-        [DataMember] public double Width;
-        [DataMember] public double Height;
-        [DataMember] public WindowState WindowState;
-        [DataMember] public string DefaultVersion;
-        [DataMember] public string DefaultVersionPath;
+        public double Width { get; set; }
+        public double Height { get; set; }
+        public WindowState WindowState { get; set; }
+        public string DefaultVersion { get; set; } = null!;
+        public string DefaultVersionPath { get; set; } = null!;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using System.Net.Http.Json;
 using System.Windows;
 using System.Windows.Controls;
 using Launcher.Core;
@@ -108,7 +109,7 @@ namespace Launcher.Views
                         WebClient.ProcessResponse(message,
                             (data) =>
                             {
-                                var result = JsonUtility.FromJson<VersionsResponse>(data);
+                                var result = Newtonsoft.Json.JsonConvert.DeserializeObject<VersionsResponse>(data);
                                 onDone?.Invoke(result);
                             }, (code) =>
                             {

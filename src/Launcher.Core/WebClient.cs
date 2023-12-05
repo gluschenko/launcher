@@ -10,18 +10,18 @@ namespace Launcher.Core
 {
     public class WebClient : IWebClient
     {
-        public HttpClient Client { get => webClientAsync.Client; }
+        public HttpClient Client { get => _webClientAsync.Client; }
 
-        readonly WebClientAsync webClientAsync;
+        private readonly WebClientAsync _webClientAsync;
 
         public WebClient()
         {
-            webClientAsync = new WebClientAsync();
+            _webClientAsync = new WebClientAsync();
         }
 
-        public void Get(string URL, Action<HttpResponseMessage> response, Action<Exception> error)
+        public void Get(string url, Action<HttpResponseMessage> response, Action<Exception> error)
         {
-            var task = webClientAsync.GetAsync(URL, error);
+            var task = _webClientAsync.GetAsync(url, error);
 
             Task sub = new Task(() => task.Start());
             sub.RunSynchronously();
@@ -32,9 +32,9 @@ namespace Launcher.Core
             }
         }
 
-        public void Post(string URL, Dictionary<string, object> fields, Action<HttpResponseMessage> response, Action<Exception> error)
+        public void Post(string url, Dictionary<string, object> fields, Action<HttpResponseMessage> response, Action<Exception> error)
         {
-            var task = webClientAsync.PostAsync(URL, fields, error);
+            var task = _webClientAsync.PostAsync(url, fields, error);
 
             Task sub = new Task(() => task.Start());
             sub.RunSynchronously();
