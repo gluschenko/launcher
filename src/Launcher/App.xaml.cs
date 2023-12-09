@@ -1,6 +1,9 @@
 ﻿using System.IO;
 using System.Windows;
+using Launcher.Core;
+using Launcher.Models;
 using Launcher.Pages;
+using Launcher.Services;
 using Launcher.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +15,7 @@ namespace Launcher
     public partial class App : Application
     {
         public const string Title = "Launcher";
-        public const string Version = "2020.08";
+        public const string Version = "2023.1";
         public const string ConfigPath = "Launcher.json";
         public const string PrefsPath = "LauncherPrefs.json";
         public const string DownloadsDirectory = "Downloads";
@@ -36,6 +39,18 @@ namespace Launcher
                     services.AddScoped<LocalPage>();
                     services.AddScoped<DownloadsPage>();
                     services.AddScoped<SettingsPage>();
+
+                    services.AddScoped<DataManager<Config>>(x =>
+                    {
+                        return new(GetAbsolutePath(ConfigPath));
+                    });
+
+                    services.AddScoped<DataManager<Prefs>>(x =>
+                    {
+                        return new(GetAbsolutePath(PrefsPath));
+                    });
+
+                    services.AddSingleton<StateManager>();
                 })
                 .ConfigureLogging(logging =>
                 {

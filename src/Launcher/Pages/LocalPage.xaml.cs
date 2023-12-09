@@ -3,21 +3,26 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using Launcher.Entities;
-using Launcher.Views;
+using Launcher.Helpers;
+using Launcher.Models;
+using Launcher.Services;
+using Microsoft.Extensions.Hosting;
 
 namespace Launcher.Pages
 {
     public partial class LocalPage : Page, ITabPage
     {
-        //private readonly MainWindow _mainWindow;
+        private readonly StateManager _stateManager;
+        private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
         private readonly ObservableCollection<LocalBuild> _builds = new();
 
-        public LocalPage(/*MainWindow mainWindow*/)
+        public LocalPage(StateManager stateManager, IHostApplicationLifetime hostApplicationLifetime)
         {
             InitializeComponent();
-            //_mainWindow = mainWindow;
+
+            _stateManager = stateManager;
+            _hostApplicationLifetime = hostApplicationLifetime;
             //
             ListView.Items.Clear();
             ListView.ItemsSource = _builds;
@@ -33,20 +38,23 @@ namespace Launcher.Pages
         {
             NoDataLabel.Visibility = Visibility.Hidden;
 
-            string dir = App.GetAbsolutePath(App.VersionsDirectory);
-            //if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            var path = App.GetAbsolutePath(App.VersionsDirectory);
 
-            if (Directory.Exists(dir))
+            if (Directory.Exists(path))
             {
-                string[] dirs = Directory.GetDirectories(dir);
+                var dirs = Directory.GetDirectories(path);
                 if (dirs.Length > 0)
                 {
                     _builds.Clear();
 
-                    for (int i = 0; i < dirs.Length; i++)
+                    for (var i = 0; i < dirs.Length; i++)
                     {
-                        string title = Path.GetFileName(dirs[i]);
-                        _builds.Add(new LocalBuild { Title = title, Path = dirs[i] });
+                        var title = Path.GetFileName(dirs[i]);
+                        _builds.Add(new LocalBuild
+                        {
+                            Title = title,
+                            Path = dirs[i],
+                        });
                     }
 
                     return;
@@ -70,23 +78,21 @@ namespace Launcher.Pages
             var button = (Button)sender;
             var basePath = button.Tag.ToString() ?? throw new Exception("Path is null");
 
-            /*if (_mainWindow?.Config != null)
-            {
-                string path = Path.Combine(basePath, _mainWindow.Config.BuildExecutable);
-                //MessageBox.Show(path);
+            var config = _stateManager.GetConfig();
+            var prefs = _stateManager.GetPrefs();
+            var path = Path.Combine(basePath, config.BuildExecutable);
 
-                try
-                {
-                    Process.Start(path);
-                    _mainWindow.Prefs.DefaultVersionPath = path;
-                    _mainWindow.Prefs.DefaultVersion = Path.GetFileName(basePath);
-                    _mainWindow.Close();
-                }
-                catch (Exception ex)
-                {
-                    MessageHelper.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
-                }
-            }*/
+            try
+            {
+                Process.Start(path);
+                prefs.DefaultVersionPath = path;
+                prefs.DefaultVersion = Path.GetFileName(basePath);
+                _hostApplicationLifetime.StopApplication();
+            }
+            catch (Exception ex)
+            {
+                MessageHelper.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
+            }
         }
     }
 }

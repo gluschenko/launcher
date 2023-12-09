@@ -1,30 +1,30 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using Launcher.Views;
+using Launcher.Helpers;
+using Launcher.Services;
+using Microsoft.Extensions.Hosting;
 
 namespace Launcher.Pages
 {
     public partial class MainPage : Page, ITabPage
     {
-        //private readonly MainWindow _mainWindow;
-        private readonly LocalPage _localPage;
+        private readonly StateManager _stateManager;
+        private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
-        public MainPage(/*MainWindow mainWindow,*/ LocalPage localPage)
+        public MainPage(StateManager stateManager, IHostApplicationLifetime hostApplicationLifetime)
         {
             InitializeComponent();
-            //_mainWindow = mainWindow;
-            _localPage = localPage;
+            _stateManager = stateManager;
+            _hostApplicationLifetime = hostApplicationLifetime;
         }
 
         public void OnShown()
         {
             VersionLabel.Content = "";
 
-            /*if (_mainWindow?.Prefs != null)
-            {
-                VersionLabel.Content = _mainWindow.Prefs.DefaultVersion ?? "";
-            }*/
+            var prefs = _stateManager.GetPrefs();
+            VersionLabel.Content = prefs.DefaultVersion ?? "";
         }
 
         public void OnHidden()
@@ -33,28 +33,26 @@ namespace Launcher.Pages
 
         private void PlayButton_Click(object? sender, RoutedEventArgs e)
         {
-            /*if (_mainWindow.Prefs != null)
+            var prefs = _stateManager.GetPrefs();
+
+
+            if (string.IsNullOrEmpty(prefs.DefaultVersionPath))
             {
-                if (string.IsNullOrEmpty(_mainWindow.Prefs.DefaultVersionPath))
+                _stateManager.GetTabHost().Navigate<LocalPage>();
+            }
+            else
+            {
+                try
                 {
-                    _mainWindow.TabControl.Navigate(_localPage);
+                    Process.Start(_stateManager.GetPrefs().DefaultVersionPath);
+                    _hostApplicationLifetime.StopApplication();
                 }
-                else
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        Process.Start(_mainWindow.Prefs.DefaultVersionPath);
-                        _mainWindow.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageHelper.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
-                        _mainWindow.TabControl.Navigate(_localPage);
-                    }
+                    MessageHelper.Error($"Ошибка запуска ({ex.GetType().Name})", "Error");
+                    _stateManager.GetTabHost().Navigate<LocalPage>();
                 }
-            }*/
+            }
         }
-
-
     }
 }

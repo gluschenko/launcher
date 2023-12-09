@@ -27,19 +27,29 @@ namespace Launcher
 
                 void OnClick(object sender, RoutedEventArgs args)
                 {
-                    Navigate(page);
+                    Navigate(page.GetType());
                 }
             }
 
-            if (pages.Length > 0) Navigate(pages[0]);
+            if (pages.Length > 0)
+            {
+                Navigate(pages[0].GetType());
+            }
         }
 
-        public void Navigate(Page page)
+        public void Navigate<T>() where T : Page
         {
-            if (Tabs.ContainsValue(page))
+            var pageType = typeof(T);
+            Navigate(pageType);
+        }
+
+        public void Navigate(Type pageType)
+        {
+            if (Tabs.Any(x => x.Value.GetType() == pageType))
             {
-                var pair = Tabs.First(p => p.Value == page);
+                var pair = Tabs.First(p => p.Value.GetType() == pageType);
                 var tab = pair.Key;
+                var page = pair.Value;
 
                 Frame.Navigate(page);
 
@@ -69,7 +79,7 @@ namespace Launcher
             }
         }
 
-        public T CloneControl<T>(T obj) where T : FrameworkElement
+        private static T CloneControl<T>(T obj) where T : FrameworkElement
         {
             return (T)XamlReader.Parse(XamlWriter.Save(obj));
         }

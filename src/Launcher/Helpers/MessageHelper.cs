@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Launcher
+namespace Launcher.Helpers
 {
     /// <summary>
     /// Easy templating of System.Windows.MessageBox

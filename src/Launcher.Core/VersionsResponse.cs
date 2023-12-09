@@ -1,14 +1,11 @@
-﻿using System.Runtime.Serialization;
-
-namespace Launcher.Core
+﻿namespace Launcher.Core
 {
-    [DataContract]
     public class VersionsResponse
     {
-        [DataMember] public string Version = "";
-        [DataMember] public string URL = "";
-        [DataMember] public string InstallerURL = "";
-        [DataMember] public string[] WindowsVersions = new string[0];
-        [DataMember] public string[] WindowsBuilds = new string[0];
+        public string Version { get; set; } = "";
+        public string URL { get; set; } = "";
+        public string InstallerURL { get; set; } = "";
+        public string[] WindowsVersions { get; set; } = System.Array.Empty<string>();
+        public string[] WindowsBuilds { get; set; } = System.Array.Empty<string>();
     }
 }

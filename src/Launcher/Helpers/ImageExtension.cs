@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Launcher
+namespace Launcher.Helpers
 {
     public static class ImageExtension
     {

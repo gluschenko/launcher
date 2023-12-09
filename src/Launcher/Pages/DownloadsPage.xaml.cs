@@ -4,7 +4,8 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Launcher.Core;
-using Launcher.Entities;
+using Launcher.Helpers;
+using Launcher.Models;
 using WebClient = System.Net.WebClient;
 
 namespace Launcher.Pages

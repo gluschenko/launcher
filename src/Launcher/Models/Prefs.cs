@@ -1,7 +1,6 @@
-﻿using System.Runtime.Serialization;
-using System.Windows;
+﻿using System.Windows;
 
-namespace Launcher
+namespace Launcher.Models
 {
     public class Prefs
     {
